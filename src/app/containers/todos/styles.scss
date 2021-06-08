@@ -1,0 +1,12 @@
+@import '../../../sass/typography';
+
+.container {
+  max-width: 39.1875rem; // 627px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 3.8125rem; //61px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
