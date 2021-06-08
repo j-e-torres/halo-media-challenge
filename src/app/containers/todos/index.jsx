@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TodosApi from '../../../api/todosApi';
 
 import './styles.scss';
+import { ReactComponent as Arrow } from './assets/arrow.svg';
 
 class Todos extends Component {
   constructor(props) {
@@ -30,6 +31,13 @@ class Todos extends Component {
 
         <div className="content">
           <div className="content__input">
+            <button className="content__button">
+              {/* <svg class="content__arrowIcon">
+                <use xlink:href="assets/arrow.svg"></use>
+              </svg> */}
+              <Arrow />
+            </button>
+
             <input type="text" placeholder="What needs to be done?" />
           </div>
         </div>
