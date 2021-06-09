@@ -22,19 +22,19 @@ class Todos extends Component {
   }
 
   handleChange = ({ target }) => {
-    console.log('target', target.value);
     this.setState({ [target.name]: target.value });
   };
 
   handleKeyPress = async (e) => {
-    console.log('eeeeeee', e.key);
     const { todo, todos } = this.state;
 
+    const reqBody = {
+      content: todo,
+      isDone: false,
+    };
+
     if (e.key === 'Enter') {
-      const res = await TodosApi.createTodo({
-        content: todo,
-        isDone: false,
-      });
+      const res = await TodosApi.createTodo(reqBody);
 
       this.setState({
         todo: '',
@@ -61,7 +61,11 @@ class Todos extends Component {
 
         <div className="content">
           <div className="content__input">
-            <button className="content__button">
+            <button
+              className={`content__button ${
+                todos?.length > 0 ? 'content__button--show' : ''
+              }`}
+            >
               <Arrow />
             </button>
 

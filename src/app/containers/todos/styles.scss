@@ -21,9 +21,10 @@
     left: 1rem; //16px;
     border: none;
     background-color: #ffffff;
+    display: none;
 
-    & svg {
-      // fill: ;
+    &--show {
+      display: inline-block;
     }
   }
 
