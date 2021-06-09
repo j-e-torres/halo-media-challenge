@@ -3,6 +3,7 @@ import TodosApi from '../../../api/todosApi';
 
 import './styles.scss';
 import { ReactComponent as Arrow } from './assets/arrow.svg';
+import { ReactComponent as Checkmark } from './assets/check-mark.svg';
 
 class Todos extends Component {
   constructor(props) {
@@ -57,7 +58,7 @@ class Todos extends Component {
 
     return (
       <div className="container">
-        <h1 className="heading-primary">todos</h1>
+        <h1 className="heading-primary u-margin-bottom-medium">todos</h1>
 
         <div className="content">
           <div className="content__input">
@@ -79,6 +80,18 @@ class Todos extends Component {
               onKeyPress={handleKeyPress}
             />
           </div>
+
+          <ul className="content__todos">
+            {todos?.map((todo) => {
+              return (
+                <li key={todo.id} className="content__todo">
+                  <div className="content__checkbox">{/* <Checkmark /> */}</div>
+
+                  {todo.content}
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     );
