@@ -13,6 +13,16 @@ class TodosApi {
       throw error;
     }
   };
+
+  createTodo = async (data) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/todos`, data);
+
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default TodosApi = new TodosApi();
