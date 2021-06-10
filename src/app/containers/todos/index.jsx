@@ -201,6 +201,16 @@ class Todos extends Component {
         break;
       }
     }
+
+    const itemsLeft = todos.reduce((acc, todo) => {
+      if (!todo.isDone) ++acc;
+      return acc;
+    }, 0);
+
+    /**
+     * Could be own component
+     *
+     */
     const ButtonTab = (tabName, key) => (
       <>
         {key === tab ? (
@@ -224,7 +234,6 @@ class Todos extends Component {
     );
 
     console.log('todos', todos);
-    console.log('tabs', tab);
 
     return (
       <div className="container">
@@ -291,7 +300,9 @@ class Todos extends Component {
             })}
 
             <div className="content__footer">
-              <div className="content__itemCount">1 item left</div>
+              <div className="content__itemCount">{`${itemsLeft} ${
+                itemsLeft === 1 ? 'item' : 'items'
+              } left`}</div>
 
               <div className="content__tabs">
                 {ButtonTab('all', 'all')}
