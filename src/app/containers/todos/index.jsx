@@ -44,17 +44,41 @@ class Todos extends Component {
     }
   };
 
+  toggleComplete = async (todo) => {
+    const { todos } = this.state;
+
+    const reqBody = {
+      id: todo.id,
+      data: {
+        isDone: !todo.isDone,
+      },
+    };
+    const res = await TodosApi.toggleComplete(reqBody);
+
+    /**
+     * find todo in current todos that match res todo
+     * update that object
+     * then setState of todos with current positioning
+     * updates todo in place
+     */
+    const todoIndex = todos.findIndex((todo) => todo.id === res.id);
+
+    if (todoIndex > -1) {
+      todos.splice(todoIndex, 1, res);
+    } else {
+      console.log('todo to be updated not found');
+    }
+
+    this.setState({
+      todos: todos,
+    });
+  };
+
   render() {
     const { todos, todo } = this.state;
-    const { handleChange, handleKeyPress } = this;
+    const { handleChange, handleKeyPress, toggleComplete } = this;
 
     console.log('todos', todos);
-    /**
-     * @enterbutton
-     * @should clear input field
-     * @should create a new todo, @POST method
-     * @should add created todo to @todos
-     */
 
     return (
       <div className="container">
@@ -84,8 +108,24 @@ class Todos extends Component {
           <ul className="content__todos">
             {todos?.map((todo) => {
               return (
-                <li key={todo.id} className="content__todo">
-                  <div className="content__checkbox">{/* <Checkmark /> */}</div>
+                <li
+                  key={todo.id}
+                  className={`content__todo ${
+                    todo.isDone ? 'content__todo--done' : ''
+                  }`}
+                >
+                  <div
+                    onClick={() => toggleComplete(todo)}
+                    className={`content__checkbox ${
+                      todo.isDone ? 'content__checkbox--done' : ''
+                    }`}
+                  >
+                    {todo.isDone && (
+                      <span className="content__checkmark">
+                        <Checkmark />
+                      </span>
+                    )}
+                  </div>
 
                   {todo.content}
                 </li>

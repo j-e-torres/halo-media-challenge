@@ -21,6 +21,16 @@ class TodosApi {
       throw error;
     }
   };
+
+  toggleComplete = async ({ id, data }) => {
+    try {
+      const res = await axios.put(`${API_BASE_URL}/todos/${id}`, data);
+
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default TodosApi = new TodosApi();
