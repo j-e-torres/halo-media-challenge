@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import TodosApi from '../../../api/todosApi';
 
+import TodosApi from '../../../api/todosApi';
 import './styles.scss';
 import { ReactComponent as Arrow } from './assets/arrow.svg';
 import { ReactComponent as Checkmark } from './assets/check-mark.svg';
@@ -13,17 +13,34 @@ class Todos extends Component {
     this.state = {
       todos: [],
       todo: '',
-      // allCompleted: this.state.todos?.reduce((acc, todo) => {
-      //   if ( todo.isDone)
-      // }, true)
+      tab: 'all',
     };
   }
 
-  async componentDidMount() {
-    // const { todos } = this.state;
-    const res = await TodosApi.getAllTodos();
-
+  getTodos = async () => {
+    const { location } = this.props;
+    const search = location.search;
+    const res = await TodosApi.getAllTodos(search);
     this.setState({ todos: res });
+  };
+
+  componentDidMount() {
+    // const { location } = this.props;
+    // // handle url search here
+    // // console.log('thisisisisisisisi', this.props);
+    // const search = location.search;
+    // console.log('searrrccchhh', search);
+    // const res = await TodosApi.getAllTodos(search);
+    // this.setState({ todos: res });
+    return this.getTodos();
+  }
+
+  async componentDidUpdate(prevProps) {
+    // console.log('didUpdatePrevProps', prevProps);
+    // console.log('didUpdate thisProps', this.props);
+
+    if (prevProps.location.search !== this.props.location.search)
+      return this.getTodos();
   }
 
   handleChange = ({ target }) => {
@@ -139,18 +156,41 @@ class Todos extends Component {
     this.setState({
       todos: updateTodos,
     });
+  };
 
-    console.log('frontend response', res);
+  filterTodos = (tab) => {
+    const { history } = this.props;
+
+    switch (tab) {
+      case 'all':
+        history.push('/');
+        this.setState({ tab: 'all' });
+        break;
+
+      case 'active':
+        history.push('/?isDone=false');
+        this.setState({ tab: 'active' });
+        break;
+
+      case 'completed':
+        history.push('/?isDone=true');
+        this.setState({ tab: 'completed' });
+        break;
+
+      default:
+        break;
+    }
   };
 
   render() {
-    const { todos, todo } = this.state;
+    const { todos, todo, tab } = this.state;
     const {
       handleChange,
       handleKeyPress,
       toggleComplete,
       deleteTodo,
       toggleCompleteAll,
+      filterTodos,
     } = this;
 
     let allCompleted = true;
@@ -161,8 +201,30 @@ class Todos extends Component {
         break;
       }
     }
+    const ButtonTab = (tabName, key) => (
+      <>
+        {key === tab ? (
+          <button
+            type="button"
+            className="content__tab content__tab--active"
+            onClick={() => filterTodos(key)}
+          >
+            {tabName}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="content__tab"
+            onClick={() => filterTodos(key)}
+          >
+            {tabName}
+          </button>
+        )}
+      </>
+    );
 
     console.log('todos', todos);
+    console.log('tabs', tab);
 
     return (
       <div className="container">
@@ -190,7 +252,11 @@ class Todos extends Component {
             />
           </div>
 
-          <ul className="content__todos">
+          <ul
+            className={`content__todos ${
+              todos?.length > 0 ? 'content__todos--show' : ''
+            }`}
+          >
             {todos?.map((todo) => {
               return (
                 <li
@@ -223,6 +289,20 @@ class Todos extends Component {
                 </li>
               );
             })}
+
+            <div className="content__footer">
+              <div className="content__itemCount">1 item left</div>
+
+              <div className="content__tabs">
+                {ButtonTab('all', 'all')}
+                {ButtonTab('active', 'active')}
+                {ButtonTab('completed', 'completed')}
+              </div>
+
+              <button type="button" className="content__clearCompleted">
+                clear Completed
+              </button>
+            </div>
           </ul>
         </div>
       </div>

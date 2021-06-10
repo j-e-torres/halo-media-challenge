@@ -22,6 +22,12 @@ body {
   // line-height: 1.7;
 }
 
-input {
+input,
+button {
   font-family: inherit;
+}
+
+button {
+  font-size: inherit;
+  font-weight: inherit;
 }

@@ -24,6 +24,7 @@
     border: none;
     background-color: #ffffff;
     display: none;
+    cursor: pointer;
 
     &--show {
       display: inline-block;
@@ -64,6 +65,13 @@
     list-style-type: none;
     font-size: 1.5rem; //24px;
     font-weight: 300;
+    display: none;
+    visibility: hidden;
+
+    &--show {
+      display: block;
+      visibility: visible;
+    }
   }
 
   &__todo {
@@ -88,6 +96,7 @@
     height: 1.75rem; //28px;
     top: 1.1875rem; //19px;
     left: 1rem; //16px;
+    cursor: pointer;
 
     border: 2px solid #dfdfdf;
     box-sizing: border-box;
@@ -111,6 +120,7 @@
     top: 1.125rem; //18px;
     right: 1rem; //16px;
     font-feature-settings: 'liga' off;
+    cursor: pointer;
   }
 
   /*
@@ -118,5 +128,55 @@
   */
   &__todo:hover &__delete {
     display: inline-block;
+  }
+
+  &__footer {
+    display: flex;
+    height: 3.6875rem; //59px;
+    background-color: #ffffff;
+    align-items: center;
+    justify-content: space-between;
+    // padding: 21px 23px 21px 16px;
+    padding: 1.3125rem 1.4375rem 1.3125rem 1rem;
+    font-weight: 200;
+    font-size: 0.875rem; //14px;
+
+    button {
+      background-color: #ffffff;
+      outline: none;
+
+      cursor: pointer;
+    }
+  }
+
+  &__itemCount {
+  }
+
+  &__tabs {
+    display: flex;
+    align-items: center;
+
+    & * {
+      text-transform: capitalize;
+      &:not(:last-child) {
+        margin-right: 1.375rem; //22px;
+      }
+    }
+  }
+
+  &__tab {
+    border: none;
+    padding: 3px 7px;
+
+    &--active {
+      border: 1px solid #000000;
+      border-radius: 2px;
+    }
+  }
+
+  &__clearCompleted {
+    border: none;
+
+    text-transform: capitalize;
   }
 }

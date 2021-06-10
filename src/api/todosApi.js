@@ -2,9 +2,9 @@ import axios from 'axios';
 import { API_BASE_URL } from './config';
 
 class TodosApi {
-  getAllTodos = async () => {
+  getAllTodos = async (options) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/todos`);
+      const res = await axios.get(`${API_BASE_URL}/todos${options}`);
 
       return res.data;
     } catch (error) {
