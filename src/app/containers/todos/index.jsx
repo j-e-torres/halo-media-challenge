@@ -13,6 +13,9 @@ class Todos extends Component {
     this.state = {
       todos: [],
       todo: '',
+      // allCompleted: this.state.todos?.reduce((acc, todo) => {
+      //   if ( todo.isDone)
+      // }, true)
     };
   }
 
@@ -93,9 +96,71 @@ class Todos extends Component {
     });
   };
 
+  toggleCompleteAll = async (allCompleted) => {
+    const { todos } = this.state;
+
+    let res;
+    const reqBody = {
+      todos,
+      data: {
+        isDone: false,
+      },
+    };
+
+    /**
+     * If all are isDone: true(allCompleted)
+     * Send all todos and make them false
+     *
+     * Else, filter isDone: false todos
+     * Send all incompleted todos and make them true
+     *
+     * Once response is received, change all this.state.todos in place
+     */
+    if (allCompleted) {
+      res = await TodosApi.toggleCompleteAll(reqBody);
+    } else {
+      const falseTodos = todos.filter((todo) => todo.isDone === false);
+
+      reqBody.todos = falseTodos;
+      reqBody.data.isDone = true;
+      res = await TodosApi.toggleCompleteAll(reqBody);
+    }
+
+    const updateTodos = todos.map((todo) => {
+      const found = res.find((t) => t.data.id === todo.id);
+
+      if (found) {
+        todo.isDone = found.data.isDone;
+      }
+
+      return todo;
+    });
+
+    this.setState({
+      todos: updateTodos,
+    });
+
+    console.log('frontend response', res);
+  };
+
   render() {
     const { todos, todo } = this.state;
-    const { handleChange, handleKeyPress, toggleComplete, deleteTodo } = this;
+    const {
+      handleChange,
+      handleKeyPress,
+      toggleComplete,
+      deleteTodo,
+      toggleCompleteAll,
+    } = this;
+
+    let allCompleted = true;
+
+    for (const t of todos) {
+      if (t.isDone === false) {
+        allCompleted = false;
+        break;
+      }
+    }
 
     console.log('todos', todos);
 
@@ -106,9 +171,10 @@ class Todos extends Component {
         <div className="content">
           <div className="content__input">
             <button
+              onClick={() => toggleCompleteAll(allCompleted)}
               className={`content__button ${
                 todos?.length > 0 ? 'content__button--show' : ''
-              }`}
+              } ${allCompleted ? 'content__button--done' : ''}`}
             >
               <Arrow />
             </button>

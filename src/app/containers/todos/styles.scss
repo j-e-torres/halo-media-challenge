@@ -28,6 +28,14 @@
     &--show {
       display: inline-block;
     }
+
+    &--done {
+      svg {
+        path {
+          fill-opacity: 1;
+        }
+      }
+    }
   }
 
   &__input {
