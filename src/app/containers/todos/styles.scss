@@ -96,4 +96,19 @@
 
   &__checkmark {
   }
+
+  &__delete {
+    display: none;
+    position: absolute;
+    top: 1.125rem; //18px;
+    right: 1rem; //16px;
+    font-feature-settings: 'liga' off;
+  }
+
+  /*
+    Hover effect affecting delete button
+  */
+  &__todo:hover &__delete {
+    display: inline-block;
+  }
 }

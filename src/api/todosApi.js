@@ -31,6 +31,16 @@ class TodosApi {
       throw error;
     }
   };
+
+  deleteTodo = async (id) => {
+    try {
+      const res = await axios.delete(`${API_BASE_URL}/todos/${id}`);
+
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default TodosApi = new TodosApi();

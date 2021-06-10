@@ -4,6 +4,7 @@ import TodosApi from '../../../api/todosApi';
 import './styles.scss';
 import { ReactComponent as Arrow } from './assets/arrow.svg';
 import { ReactComponent as Checkmark } from './assets/check-mark.svg';
+import { ReactComponent as X } from './assets/x.svg';
 
 class Todos extends Component {
   constructor(props) {
@@ -74,9 +75,27 @@ class Todos extends Component {
     });
   };
 
+  deleteTodo = async (id) => {
+    const { todos } = this.state;
+
+    const res = await TodosApi.deleteTodo(id);
+
+    const todoIndex = todos.findIndex((todo) => todo.id === res.id);
+
+    if (todoIndex > -1) {
+      todos.splice(todoIndex, 1);
+    } else {
+      console.log('todo to be deleted not found');
+    }
+
+    this.setState({
+      todos: todos,
+    });
+  };
+
   render() {
     const { todos, todo } = this.state;
-    const { handleChange, handleKeyPress, toggleComplete } = this;
+    const { handleChange, handleKeyPress, toggleComplete, deleteTodo } = this;
 
     console.log('todos', todos);
 
@@ -128,6 +147,13 @@ class Todos extends Component {
                   </div>
 
                   {todo.content}
+
+                  <span
+                    onClick={() => deleteTodo(todo.id)}
+                    className="content__delete"
+                  >
+                    <X />
+                  </span>
                 </li>
               );
             })}
