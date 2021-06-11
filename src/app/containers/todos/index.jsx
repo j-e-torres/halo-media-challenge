@@ -35,7 +35,7 @@ class Todos extends Component {
     return this.getTodos();
   }
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     // console.log('didUpdatePrevProps', prevProps);
     // console.log('didUpdate thisProps', this.props);
 
@@ -110,6 +110,28 @@ class Todos extends Component {
 
     this.setState({
       todos: todos,
+    });
+  };
+
+  deleteAllCompleted = async (completedTodos) => {
+    const { todos } = this.state;
+
+    const reqBody = {
+      todos: completedTodos,
+    };
+
+    const res = await TodosApi.deleteAllCompleted(reqBody);
+
+    const updateTodos = todos.filter((todo) => {
+      const found = res.find((t) => t.data.id === todo.id);
+
+      if (!found) {
+        return todo;
+      }
+    });
+
+    this.setState({
+      todos: updateTodos,
     });
   };
 
@@ -191,14 +213,20 @@ class Todos extends Component {
       deleteTodo,
       toggleCompleteAll,
       filterTodos,
+      deleteAllCompleted,
     } = this;
 
+    // perhaps should be added to state;
     let allCompleted = true;
+    const completedTodos = [];
 
     for (const t of todos) {
-      if (t.isDone === false) {
+      if (t.isDone) {
+        completedTodos.push(t);
+      } else if (allCompleted === false) {
+        continue;
+      } else {
         allCompleted = false;
-        break;
       }
     }
 
@@ -310,7 +338,15 @@ class Todos extends Component {
                 {ButtonTab('completed', 'completed')}
               </div>
 
-              <button type="button" className="content__clearCompleted">
+              <button
+                onClick={() => deleteAllCompleted(completedTodos)}
+                type="button"
+                className={`content__clearCompleted ${
+                  completedTodos.length > 0
+                    ? 'content__clearCompleted--show'
+                    : ''
+                }`}
+              >
                 clear Completed
               </button>
             </div>

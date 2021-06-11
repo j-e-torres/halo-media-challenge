@@ -176,7 +176,11 @@
 
   &__clearCompleted {
     border: none;
-
+    visibility: hidden;
     text-transform: capitalize;
+
+    &--show {
+      visibility: visible;
+    }
   }
 }
