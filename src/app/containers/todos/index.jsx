@@ -39,7 +39,7 @@ class Todos extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  handleKeyPress = async (e) => {
+  createTodoKeyPress = async (e) => {
     const { todo, todos } = this.state;
 
     const reqBody = {
@@ -54,6 +54,36 @@ class Todos extends Component {
         todo: '',
         todos: [...todos, res],
       });
+    }
+  };
+
+  editTodoKeyPress = async (e, id) => {
+    console.log('editKeyPress', e);
+
+    const { updateTodo, todos } = this.state;
+
+    const reqBody = {
+      id,
+      data: {
+        content: updateTodo,
+      },
+    };
+
+    if (e.key === 'Enter') {
+      const res = await TodosApi.editTodo(reqBody);
+
+      const todoIndex = todos.findIndex((todo) => todo.id === res.id);
+
+      if (todoIndex > -1) {
+        todos.splice(todoIndex, 1, res);
+      }
+
+      this.setState({
+        updateTodo: '',
+        todos: todos,
+      });
+      e.target.readOnly = true;
+      e.target.defaultValue = res.content;
     }
   };
 
@@ -199,22 +229,27 @@ class Todos extends Component {
   };
 
   handleDoubleClick = (e) => {
-    const { editable } = this.state;
-    this.setState({ editable: !editable });
+    const { editable, updateTodo } = this.state;
+
+    e.target.readOnly = false;
+    e.target.value = e.target.defaultValue + updateTodo;
   };
 
   render() {
     const { todos, todo, tab, updateTodo, editable } = this.state;
 
+    console.log('updateTodo state', updateTodo);
+
     const {
       handleChange,
-      handleKeyPress,
+      createTodoKeyPress,
       editTodo,
       deleteTodo,
       toggleCompleteAll,
       filterTodos,
       deleteAllCompleted,
       handleDoubleClick,
+      editTodoKeyPress,
     } = this;
 
     // perhaps should be added to state;
@@ -285,7 +320,7 @@ class Todos extends Component {
               id="todo"
               value={todo}
               onChange={handleChange}
-              onKeyPress={handleKeyPress}
+              onKeyPress={createTodoKeyPress}
             />
           </div>
 
@@ -320,21 +355,17 @@ class Todos extends Component {
                     )}
                   </div>
 
-                  {/* {editable ? (
-                    <div onDoubleClick={handleDoubleClick}>{todo.content}</div>
-                  ) : (
-                    <input
-                      key={todo.id}
-                      onChange={handleChange}
-                      // contentEditable={false}
-                      className="content__todoText"
-                      name="updateTodo"
-                      type="text"
-                      id="updateTodo"
-                      value={updateTodo}
-                    />
-                  )} */}
-                  <div className="content__todoText">{todo.content}</div>
+                  <input
+                    onKeyPress={(e) => editTodoKeyPress(e, todo.id)}
+                    onChange={handleChange}
+                    // onDoubleClick={handleDoubleClick}
+                    onDoubleClick={todo.isDone ? null : handleDoubleClick}
+                    className="content__todoText content__todoText--input"
+                    readOnly={true}
+                    defaultValue={todo.content}
+                    name="updateTodo"
+                    placeholder="Edit todo"
+                  />
 
                   <span
                     onClick={() => deleteTodo(todo.id)}

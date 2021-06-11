@@ -132,11 +132,40 @@
   &__todoText {
     // display: inline-block;
     overflow-x: scroll;
+    width: 100%;
+
+    &--input {
+      width: 95%;
+      // border: 1px solid rgba(0, 0, 0, 0.4);
+      // border-radius: 5px;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      padding-left: 1rem;
+
+      &::placeholder {
+        color: rgba(0, 0, 0, 0.4);
+        font-style: italic;
+        font-size: 1rem;
+      }
+
+      &:disabled {
+        background-color: inherit;
+        border: none;
+      }
+
+      &:read-only {
+        border: none;
+        cursor: default;
+      }
+    }
 
     &:active,
     &:focus {
-      width: 100%;
-      outline: 1px solid rgba(0, 0, 0, 0.4);
+      // width: 100%;
+      // outline: 1px solid rgba(0, 0, 0, 0.4);
+      outline: none;
     }
   }
 
