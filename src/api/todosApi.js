@@ -22,7 +22,7 @@ class TodosApi {
     }
   };
 
-  toggleComplete = async ({ id, data }) => {
+  editTodo = async ({ id, data }) => {
     try {
       const res = await axios.put(`${API_BASE_URL}/todos/${id}`, data);
 

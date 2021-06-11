@@ -14,6 +14,8 @@ class Todos extends Component {
       todos: [],
       todo: '',
       tab: 'all',
+      updateTodo: '',
+      editable: false,
     };
   }
 
@@ -25,26 +27,17 @@ class Todos extends Component {
   };
 
   componentDidMount() {
-    // const { location } = this.props;
-    // // handle url search here
-    // // console.log('thisisisisisisisi', this.props);
-    // const search = location.search;
-    // console.log('searrrccchhh', search);
-    // const res = await TodosApi.getAllTodos(search);
-    // this.setState({ todos: res });
     return this.getTodos();
   }
 
   componentDidUpdate(prevProps) {
-    // console.log('didUpdatePrevProps', prevProps);
-    // console.log('didUpdate thisProps', this.props);
-
     if (prevProps.location.search !== this.props.location.search)
       return this.getTodos();
   }
 
-  handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+  handleChange = (e) => {
+    console.log('handle change EEEEE', e);
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   handleKeyPress = async (e) => {
@@ -65,16 +58,21 @@ class Todos extends Component {
     }
   };
 
-  toggleComplete = async (todo) => {
-    const { todos } = this.state;
+  editTodo = async ({ todo, toggleComplete }) => {
+    const { todos, editTodo } = this.state;
 
     const reqBody = {
       id: todo.id,
-      data: {
-        isDone: !todo.isDone,
-      },
+      data: {},
     };
-    const res = await TodosApi.toggleComplete(reqBody);
+
+    if (toggleComplete) {
+      reqBody.data.isDone = !todo.isDone;
+    } else {
+      reqBody.data.content = editTodo;
+    }
+
+    const res = await TodosApi.editTodo(reqBody);
 
     /**
      * find todo in current todos that match res todo
@@ -86,8 +84,6 @@ class Todos extends Component {
 
     if (todoIndex > -1) {
       todos.splice(todoIndex, 1, res);
-    } else {
-      console.log('todo to be updated not found');
     }
 
     this.setState({
@@ -104,8 +100,6 @@ class Todos extends Component {
 
     if (todoIndex > -1) {
       todos.splice(todoIndex, 1);
-    } else {
-      console.log('todo to be deleted not found');
     }
 
     this.setState({
@@ -204,16 +198,24 @@ class Todos extends Component {
     }
   };
 
+  handleDoubleClick = (e) => {
+    // console.log('eeeeeee', e);
+    const { editable } = this.state;
+    this.setState({ editable: !editable });
+  };
+
   render() {
-    const { todos, todo, tab } = this.state;
+    const { todos, todo, tab, updateTodo, editable } = this.state;
+
     const {
       handleChange,
       handleKeyPress,
-      toggleComplete,
+      editTodo,
       deleteTodo,
       toggleCompleteAll,
       filterTodos,
       deleteAllCompleted,
+      handleDoubleClick,
     } = this;
 
     // perhaps should be added to state;
@@ -230,6 +232,7 @@ class Todos extends Component {
       }
     }
 
+    // items left counter
     const itemsLeft = todos.reduce((acc, todo) => {
       if (!todo.isDone) ++acc;
       return acc;
@@ -261,8 +264,6 @@ class Todos extends Component {
       </>
     );
 
-    console.log('todos', todos);
-
     return (
       <div className="container">
         <h1 className="heading-primary u-margin-bottom-medium">todos</h1>
@@ -271,9 +272,9 @@ class Todos extends Component {
           <div className="content__input">
             <button
               onClick={() => toggleCompleteAll(allCompleted)}
-              className={`content__button ${
-                todos?.length > 0 ? 'content__button--show' : ''
-              } ${allCompleted ? 'content__button--done' : ''}`}
+              className={`content__arrow ${
+                todos?.length > 0 ? 'content__arrow--show' : ''
+              } ${allCompleted ? 'content__arrow--done' : ''}`}
             >
               <Arrow />
             </button>
@@ -303,7 +304,12 @@ class Todos extends Component {
                   }`}
                 >
                   <div
-                    onClick={() => toggleComplete(todo)}
+                    onClick={() =>
+                      editTodo({
+                        todo,
+                        toggleComplete: true,
+                      })
+                    }
                     className={`content__checkbox ${
                       todo.isDone ? 'content__checkbox--done' : ''
                     }`}
@@ -315,7 +321,21 @@ class Todos extends Component {
                     )}
                   </div>
 
-                  {todo.content}
+                  {/* {editable ? (
+                    <div onDoubleClick={handleDoubleClick}>{todo.content}</div>
+                  ) : (
+                    <input
+                      key={todo.id}
+                      onChange={handleChange}
+                      // contentEditable={false}
+                      className="content__todoText"
+                      name="updateTodo"
+                      type="text"
+                      id="updateTodo"
+                      value={updateTodo}
+                    />
+                  )} */}
+                  <div className="content__todoText">{todo.content}</div>
 
                   <span
                     onClick={() => deleteTodo(todo.id)}
