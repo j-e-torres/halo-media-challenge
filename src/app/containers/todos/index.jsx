@@ -36,7 +36,6 @@ class Todos extends Component {
   }
 
   handleChange = (e) => {
-    console.log('handle change EEEEE', e);
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -174,8 +173,9 @@ class Todos extends Component {
     });
   };
 
-  filterTodos = (tab) => {
+  filterTodos = (tab, e) => {
     const { history } = this.props;
+    e.preventDefault();
 
     switch (tab) {
       case 'all':
@@ -199,7 +199,6 @@ class Todos extends Component {
   };
 
   handleDoubleClick = (e) => {
-    // console.log('eeeeeee', e);
     const { editable } = this.state;
     this.setState({ editable: !editable });
   };
@@ -248,7 +247,7 @@ class Todos extends Component {
           <button
             type="button"
             className="content__tab content__tab--active"
-            onClick={() => filterTodos(key)}
+            onClick={(e) => filterTodos(key, e)}
           >
             {tabName}
           </button>
@@ -256,7 +255,7 @@ class Todos extends Component {
           <button
             type="button"
             className="content__tab"
-            onClick={() => filterTodos(key)}
+            onClick={(e) => filterTodos(key, e)}
           >
             {tabName}
           </button>
